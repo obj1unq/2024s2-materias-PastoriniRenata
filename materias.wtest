@@ -1,0 +1,128 @@
+import alumno.*
+import materia.*
+import carrera.*
+
+
+
+//MATERIAS
+const mate1           = new Materia(correlativas = #{}, alumnosCursando = #{}, cupos = 2)
+const mate2           = new Materia(correlativas = #{mate1}, alumnosCursando = #{}, cupos = 20)
+const obj1            = new Materia(correlativas = #{}, alumnosCursando = #{}, cupos = 20)
+const obj2            = new Materia(correlativas = #{obj1, mate1}, alumnosCursando = #{}, cupos = 20)
+const baseDeDatos     = new Materia(correlativas = #{obj2, baseDeDatos}, alumnosCursando = #{}, cupos = 20)
+const obj3            = new Materia(correlativas = #{obj2, baseDeDatos}, alumnosCursando = #{}, cupos = 20)
+const progConcurrente = new Materia(correlativas = #{obj1, baseDeDatos}, alumnosCursando = #{}, cupos = 10)
+
+const derecho1  = new Materia(correlativas = #{}, alumnosCursando = #{}, cupos = 20)
+
+//CARRERAS
+const programacion = new Carrera(materias = #{mate1, mate2, obj1, obj2})
+const derecho      = new Carrera(materias = #{derecho1})
+const medicina     = new Carrera(materias = #{})
+//ALUMNOS
+const roque = new Alumno(carreras = #{programacion, derecho})
+const mile = new Alumno(carreras = #{programacion})
+const gonza = new Alumno(carreras = #{programacion})
+const azu = new Alumno(carreras = #{programacion})
+const rena = new Alumno(carreras = #{programacion})
+
+
+
+
+
+describe "Tests del README" {
+  test "los requisitos de Objetos 2 son Objetos 1 y Matemática 1." {
+    assert.equals(#{obj1, mate1},obj2.correlativas())
+  }
+
+  test "Los requisitos de Objetos 3 son Objetos 2 y Bases de Datos." {
+    assert.equals(#{obj2, baseDeDatos}, obj3.correlativas())
+  }
+
+  test "Los requisitos de Programación Concurrente son Objetos 1 y Bases de Datos." {
+    assert.equals(#{obj1, baseDeDatos}, progConcurrente.correlativas())  
+  }
+}
+
+
+
+
+
+describe "_Roque_" {
+    
+  test "registro de 2 materias aprobadas distintas, intenta ingresar una amteria desaprobada,
+        intento ingresar 2 veces la misma materia y da el promedio de las materias aprobadas registradas" {
+    roque.registrarMateria(mate1, 8)
+    assert.throwsExceptionWithMessage("La materia NO está aprobada", {roque.registrarMateria(obj1, 2)})
+
+    roque.registrarMateria(obj1, 10)
+    
+    assert.throwsExceptionWithMessage("La materia ya la tiene aprobada", {roque.registrarMateria(obj1, 8)})
+
+    assert.equals(roque.cantMateriasAprobadas(),2) 
+    assert.equals(roque.promedioMateriasAprobadas(), 9)
+  }
+
+  test "intento inscribir a Mile en mate1, pero ya está inscripta" {
+    mile.inscribirAMateria(mate1)
+    assert.throwsExceptionWithMessage("Ya está inscripto en la materia", { mile.inscribirAMateria(mate1) })
+  }
+  
+  test "intento inscribir a Gonza en mate2, pero no tiene aprobada mate1" {
+    assert.throwsExceptionWithMessage("No cumple con las correlativas!", { gonza.inscribirAMateria(mate2) })
+  }
+
+  test "Intento inscribir en una materia, pero ya la tiene aprobada" {
+    azu.registrarMateria(mate1, 8)
+    assert.throwsExceptionWithMessage("Ya tiene la materia aprobada", {azu.inscribirAMateria(mate1)})
+  }
+
+  test "No es una materia de la carrerras que estudia." {
+    assert.throwsExceptionWithMessage("No es una materia de la/s carrera/s que estudia", {rena.inscribirAMateria(derecho1)})
+  }
+
+  test "al inscribir en una materia, disminuye en uno el cupo" {
+    assert.equals(20, obj1.cupos())
+
+    mile.inscribirAMateria(obj1)
+
+    assert.equals(19, obj1.cupos())
+
+  }
+  test "dar de baja con lista de espera vacía (el cupo aumenta en 1)" {
+    mile.inscribirAMateria(obj1)
+    assert.equals(19, obj1.cupos())
+    
+    mile.darDeBaja(obj1)
+    assert.equals(20, obj1.cupos())
+  }
+
+
+  test "Inscribo a Mile, Gonza y Azu en mate1, pero Azu queda en lista de espera, xq mate1 tiene cupo = 2" {
+    mile.inscribirAMateria(mate1)
+    gonza.inscribirAMateria(mate1)
+    azu.inscribirAMateria(mate1) //queda en lista de espera
+    assert.equals(#{mile, gonza}, mate1.alumnosCursando())
+    assert.equals(0, mate1.cupos())
+    assert.equals([azu], mate1.listaDeEspera())
+
+  }
+    test "Mile y Gonza son estudiantes de mate1 y Azu está en lista de espera, xq mate1 tiene cupo = 2. Doy de baja a gonza y azu queda inscripta." {
+    mile.inscribirAMateria(mate1)
+    gonza.inscribirAMateria(mate1)
+    azu.inscribirAMateria(mate1) //queda en lista de espera
+
+    gonza.darDeBaja(mate1)
+
+    assert.equals(#{mile, azu}, mate1.alumnosCursando())
+    assert.equals(0, mate1.cupos())
+    assert.that(mate1.listaDeEspera().isEmpty())
+
+
+  }
+
+
+
+
+
+}
