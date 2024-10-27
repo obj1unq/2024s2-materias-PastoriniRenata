@@ -9,7 +9,7 @@ import materiasAprobadas.*
 const mate1           = new Materia(correlativas = #{}, alumnosCursando = #{}, cupos = 20)
 const mate2           = new Materia(correlativas = #{mate1}, alumnosCursando = #{}, cupos = 20)
 const obj1            = new Materia(correlativas = #{}, alumnosCursando = #{}, cupos = 20)
-const obj2            = new Materia(correlativas = #{obj1, mate1}, alumnosCursando = #{}, cupos = 3)
+const obj2            = new Materia(correlativas = #{obj1, mate1}, alumnosCursando = #{}, cupos = 20)
 const baseDeDatos     = new Materia(correlativas = #{obj2}, alumnosCursando = #{}, cupos = 20)
 const obj3            = new Materia(correlativas = #{obj2, baseDeDatos}, alumnosCursando = #{}, cupos = 20)
 const progConcurrente = new Materia(correlativas = #{obj1, baseDeDatos}, alumnosCursando = #{}, cupos = 10)
@@ -42,33 +42,31 @@ const ana = new Alumno(carreras = #{programacion}, nombre = "ana")
 
 
 describe "Tests del README" {
-  method registrarMateriasDeRoque(){
+  method initialize(){
     roque.registrarMateria(elementosDeProg, 8)
     roque.registrarMateria(mate1, 8)
     roque.registrarMateria(obj1, 8)
     roque.registrarMateria(baseDeDatos, 8)
     roque.registrarMateria(quimica, 8)
     roque.registrarMateria(biologia1, 8)
-  }
-
-  method registrarMateriasDeLuisa(){
+  
     luisa.registrarMateria(elementosDeProg, 5)
     luisa.registrarMateria (obj1, 5)
     luisa.registrarMateria (mate1, 5)
-  }
-  method registrarMateriasDeRomina(){
+    
     romina.registrarMateria(elementosDeProg, 5)
     romina.registrarMateria(obj1, 5)
     romina.registrarMateria(mate1, 5)
-  }
-  method registrarMateriasDeAlicia(){
-      alicia.registrarMateria(elementosDeProg, 5)
-      alicia.registrarMateria(obj1, 5)
-      alicia.registrarMateria(mate1, 5)
-  }
-  method registrarMateriasDeAna(){
+  
+    alicia.registrarMateria(elementosDeProg, 5)
+    alicia.registrarMateria(obj1, 5)
+    alicia.registrarMateria(mate1, 5)
+  
     ana.registrarMateria(elementosDeProg, 6)
+
+    obj2.cupos(3)
   }
+
   /*
   Realizar estos tests:
   * Roque puede inscribirse en Objetos 2, pero no en Objetos 3 (porque le falta Objetos 2) ni en Objetos 1 (porque ya la tiene aprobada).
@@ -79,7 +77,7 @@ describe "Tests del README" {
 
   */
   test "Roque puede inscribirse en Objetos 2, pero no en Objetos 3 (porque le falta Objetos 2) ni en Objetos 1 (porque ya la tiene aprobada)" {
-    self.registrarMateriasDeRoque()
+    //self.registrarMateriasDeRoque()
 
     roque.inscribirAMateria(obj2)
 
@@ -88,7 +86,7 @@ describe "Tests del README" {
 
   }
   test "Roque puede inscribirse: en Programación, en Objetos 2 y Programación Concurrente; en Medicina, en Biología 2." {
-    self.registrarMateriasDeRoque()
+    //self.registrarMateriasDeRoque()
 
     roque.inscribirAMateria(obj2)
     roque.inscribirAMateria(progConcurrente)
@@ -102,10 +100,10 @@ describe "Tests del README" {
   }
   test "inscripcion a objetos2" {
     // Si se inscriben, en este orden, Luisa, Romina, Alicia y Roque en Objetos 2, entonces las tres primeras quedan confirmadas, y Roque queda en lista de espera.
-    self.registrarMateriasDeRoque()
-    self.registrarMateriasDeLuisa()
-    self.registrarMateriasDeRomina()
-    self.registrarMateriasDeAlicia()
+    //self.registrarMateriasDeRoque()
+    //self.registrarMateriasDeLuisa()
+    //self.registrarMateriasDeRomina()
+    //self.registrarMateriasDeAlicia()
 
 
     luisa.inscribirAMateria(obj2)
@@ -135,14 +133,14 @@ describe "Tests del README" {
   }
 
   test "materias pendientes Roque" {
-    self.registrarMateriasDeRoque()
+    //self.registrarMateriasDeRoque()
     
     assert.equals(#{mate2, progConcurrente, obj2, obj3}, roque.materiasPendientesDeCursar(programacion))
     
   }
 
   test "materias habilitadas para roque" {
-    self.registrarMateriasDeRoque()
+    //self.registrarMateriasDeRoque()
 
     assert.equals(#{mate2, progConcurrente, obj2}, roque.materiasALasQueSePuedeinscribir(programacion))
 
@@ -152,8 +150,6 @@ describe "Tests del README" {
   
 
 }
-
-
 
 
 
