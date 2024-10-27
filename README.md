@@ -49,7 +49,8 @@ No se requiere que el sistema conteste nada con respecto al resultado de la insc
 
 7. Dar de baja un estudiante de una materia. En caso de haber estudiantes en lista de espera, el primer estudiante de la lista debe obtener su lugar en la materia.
 
-8. Brindar resultados de inscripción, específicamente:
+8. Brindar resultados de inscripción, específicamente: //MI INTERPRETACIÓN: los alumnos necesitan saber su nombre para poder listarlos. un metodo en la materia para saber cuales son 
+                                                       //los inscriptos y los que estan en espera
     * Los estudiantes inscriptos a una materia dada.
     * Los estudiantes en lista de espera para una materia dada.
 
@@ -66,6 +67,9 @@ Suponiendo que
 * Roque tiene aprobadas Elementos de Programación, Matemática 1, Objetos 1, Bases de Datos, Química y Biología 1.
 * Tenemos a: Luisa, Romina y Alicia que aprobaron Elementos de Programación, Objetos 1, y Matemática 1; Ana que aprobó solamente Elementos de Programación. Todas están cursando Programación.
 * Objetos 2 tiene cupo para 3 estudiantes.
+
+
+
 
 Realizar estos tests:
 * Roque puede inscribirse en Objetos 2, pero no en Objetos 3 (porque le falta Objetos 2) ni en Objetos 1 (porque ya la tiene aprobada).

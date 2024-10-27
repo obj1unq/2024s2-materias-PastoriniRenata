@@ -1,5 +1,6 @@
 import alumno.*
 import carrera.*
+import materiasAprobadas.*
 
 class Materia{
     const property correlativas
@@ -14,12 +15,20 @@ class Materia{
         }else{
             listaDeEspera.add(alumno)
         }
+
+         
     }
-    method estaInscripto(alumno){
+    method estadoDeInscripcion() {
+      return "los alumnos inscriptos son:  " + self.nombresAlumnos(alumnosCursando) + "  y los alumnos en lista de espera son: " + self.nombresAlumnos(listaDeEspera)
+    }
+    method nombresAlumnos(alumnos){
+        return alumnos.map({alumno => alumno.nombre()}).join(", ") //join sirve para unificar en un unico string una lsita de strings
+    }
+     method estaInscripto(alumno){
         return self.alumnosCursando().contains(alumno)
     }
-    method noCumpleLasCorrelativas(materiasAprobadasDelAlumno){ 
-        return not correlativas.all({materia => materiasAprobadasDelAlumno.contains(materia)})
+    method cumpleLasCorrelativas(materiasAprobadasDelAlumno){ 
+        return correlativas.all({materia => materiasAprobadasDelAlumno.contains(materia)})
     }
     method darDeBaja(alumno){
         alumnosCursando.remove(alumno)

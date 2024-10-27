@@ -1,68 +1,164 @@
 import alumno.*
 import materia.*
 import carrera.*
+import materiasAprobadas.*
 
 
 
 //MATERIAS
-const mate1           = new Materia(correlativas = #{}, alumnosCursando = #{}, cupos = 2)
+const mate1           = new Materia(correlativas = #{}, alumnosCursando = #{}, cupos = 20)
 const mate2           = new Materia(correlativas = #{mate1}, alumnosCursando = #{}, cupos = 20)
 const obj1            = new Materia(correlativas = #{}, alumnosCursando = #{}, cupos = 20)
-const obj2            = new Materia(correlativas = #{obj1, mate1}, alumnosCursando = #{}, cupos = 20)
-const baseDeDatos     = new Materia(correlativas = #{obj2, baseDeDatos}, alumnosCursando = #{}, cupos = 20)
+const obj2            = new Materia(correlativas = #{obj1, mate1}, alumnosCursando = #{}, cupos = 3)
+const baseDeDatos     = new Materia(correlativas = #{obj2}, alumnosCursando = #{}, cupos = 20)
 const obj3            = new Materia(correlativas = #{obj2, baseDeDatos}, alumnosCursando = #{}, cupos = 20)
 const progConcurrente = new Materia(correlativas = #{obj1, baseDeDatos}, alumnosCursando = #{}, cupos = 10)
+const elementosDeProg = new Materia(correlativas = #{}, alumnosCursando = #{}, cupos = 10)
+
+const biologia1 = new Materia(correlativas = #{}, alumnosCursando = #{}, cupos = 10)
+const biologia2 = new Materia(correlativas = #{biologia1}, alumnosCursando = #{}, cupos = 10)
+const quimica = new Materia(correlativas = #{biologia1}, alumnosCursando = #{}, cupos = 10)
 
 const derecho1  = new Materia(correlativas = #{}, alumnosCursando = #{}, cupos = 20)
 
 //CARRERAS
-const programacion = new Carrera(materias = #{mate1, mate2, obj1, obj2})
+const programacion = new Carrera(materias = #{mate1, mate2, obj1, obj2, baseDeDatos, obj3, progConcurrente, elementosDeProg})
 const derecho      = new Carrera(materias = #{derecho1})
-const medicina     = new Carrera(materias = #{})
-//ALUMNOS
-const roque = new Alumno(carreras = #{programacion, derecho})
-const mile = new Alumno(carreras = #{programacion})
-const gonza = new Alumno(carreras = #{programacion})
-const azu = new Alumno(carreras = #{programacion})
-const rena = new Alumno(carreras = #{programacion})
+const medicina     = new Carrera(materias = #{biologia1, biologia2, quimica})
 
+//ALUMNOS
+const roque = new Alumno(carreras = #{programacion, medicina}, nombre = "roque")
+const mile = new Alumno(carreras = #{programacion}, nombre = "mile")
+const gonza = new Alumno(carreras = #{programacion}, nombre ="gonza")
+const azu = new Alumno(carreras = #{programacion}, nombre = "azu")
+const rena = new Alumno(carreras = #{programacion}, nombre = "rena")
+
+const luisa = new Alumno(carreras = #{programacion}, nombre = "luisa")
+const romina = new Alumno(carreras = #{programacion}, nombre = "romina")
+const alicia = new Alumno(carreras = #{programacion}, nombre = "alicia")
+const ana = new Alumno(carreras = #{programacion}, nombre = "ana")
 
 
 
 
 describe "Tests del README" {
-  test "los requisitos de Objetos 2 son Objetos 1 y Matemática 1." {
-    assert.equals(#{obj1, mate1},obj2.correlativas())
+  method registrarMateriasDeRoque(){
+    roque.registrarMateria(elementosDeProg, 8)
+    roque.registrarMateria(mate1, 8)
+    roque.registrarMateria(obj1, 8)
+    roque.registrarMateria(baseDeDatos, 8)
+    roque.registrarMateria(quimica, 8)
+    roque.registrarMateria(biologia1, 8)
   }
 
-  test "Los requisitos de Objetos 3 son Objetos 2 y Bases de Datos." {
-    assert.equals(#{obj2, baseDeDatos}, obj3.correlativas())
+  method registrarMateriasDeLuisa(){
+    luisa.registrarMateria(elementosDeProg, 5)
+    luisa.registrarMateria (obj1, 5)
+    luisa.registrarMateria (mate1, 5)
+  }
+  method registrarMateriasDeRomina(){
+    romina.registrarMateria(elementosDeProg, 5)
+    romina.registrarMateria(obj1, 5)
+    romina.registrarMateria(mate1, 5)
+  }
+  method registrarMateriasDeAlicia(){
+      alicia.registrarMateria(elementosDeProg, 5)
+      alicia.registrarMateria(obj1, 5)
+      alicia.registrarMateria(mate1, 5)
+  }
+  method registrarMateriasDeAna(){
+    ana.registrarMateria(elementosDeProg, 6)
+  }
+  /*
+  Realizar estos tests:
+  * Roque puede inscribirse en Objetos 2, pero no en Objetos 3 (porque le falta Objetos 2) ni en Objetos 1 (porque ya la tiene aprobada).
+  * Roque puede inscribirse: en Programación, en Objetos 2 y Programación Concurrente; en Medicina, en Biología 2.
+  * Si se inscriben, en este orden, Luisa, Romina, Alicia y Roque en Objetos 2, entonces las tres primeras quedan confirmadas, y Roque queda en lista de espera.
+  * Si después se da de baja Romina en Objetos 2, entonces Roque pasa a tener la inscripción confirmada en esa materia.
+
+
+  */
+  test "Roque puede inscribirse en Objetos 2, pero no en Objetos 3 (porque le falta Objetos 2) ni en Objetos 1 (porque ya la tiene aprobada)" {
+    self.registrarMateriasDeRoque()
+
+    roque.inscribirAMateria(obj2)
+
+    assert.throwsExceptionWithMessage("No cumple con las correlativas!", { roque.inscribirAMateria(obj3) })
+    assert.throwsExceptionWithMessage("Ya tiene la materia aprobada", { roque.inscribirAMateria(obj1) })
+
+  }
+  test "Roque puede inscribirse: en Programación, en Objetos 2 y Programación Concurrente; en Medicina, en Biología 2." {
+    self.registrarMateriasDeRoque()
+
+    roque.inscribirAMateria(obj2)
+    roque.inscribirAMateria(progConcurrente)
+
+    roque.inscribirAMateria(biologia2)
+
+    assert.that(obj2.estaInscripto(roque))
+    assert.that(progConcurrente.estaInscripto(roque))
+    assert.that(biologia2.estaInscripto(roque))
+
+  }
+  test "inscripcion a objetos2" {
+    // Si se inscriben, en este orden, Luisa, Romina, Alicia y Roque en Objetos 2, entonces las tres primeras quedan confirmadas, y Roque queda en lista de espera.
+    self.registrarMateriasDeRoque()
+    self.registrarMateriasDeLuisa()
+    self.registrarMateriasDeRomina()
+    self.registrarMateriasDeAlicia()
+
+
+    luisa.inscribirAMateria(obj2)
+    romina.inscribirAMateria(obj2)
+    alicia.inscribirAMateria(obj2)
+    roque.inscribirAMateria(obj2)
+
+    
+    assert.equals("los alumnos inscriptos son:  luisa, romina, alicia  y los alumnos en lista de espera son: roque", obj2.estadoDeInscripcion())
+
+
+
+    assert.equals(#{}, roque.materiasInscripto()) //no está inscripta en ninguna, esta en la lista d espera d obj2
+    assert.equals(#{obj2}, roque.materiasEnListaDeEspera())
+
+     
+
+    //Si después se da de baja Romina en Objetos 2, entonces Roque pasa a tener la inscripción confirmada en esa materia.
+
+    romina.darDeBaja(obj2)
+
+    assert.equals("los alumnos inscriptos son:  luisa, alicia, roque  y los alumnos en lista de espera son: ", obj2.estadoDeInscripcion())
+
+    assert.equals(#{obj2}, roque.materiasInscripto()) //ahora que romina se dio d baja, está inscripto en obj2, y no esta en la lista d espera d ninugna materia
+    assert.equals(#{}, roque.materiasEnListaDeEspera())
+    
   }
 
-  test "Los requisitos de Programación Concurrente son Objetos 1 y Bases de Datos." {
-    assert.equals(#{obj1, baseDeDatos}, progConcurrente.correlativas())  
+  test "materias pendientes Roque" {
+    self.registrarMateriasDeRoque()
+    
+    assert.equals(#{mate2, progConcurrente, obj2, obj3}, roque.materiasPendientesDeCursar(programacion))
+    
   }
+
+  test "materias habilitadas para roque" {
+    self.registrarMateriasDeRoque()
+
+    assert.equals(#{mate2, progConcurrente, obj2}, roque.materiasALasQueSePuedeinscribir(programacion))
+
+
+    
+  }
+  
+
 }
 
 
 
 
 
-describe "_Roque_" {
+describe "Mis test mientras programaba" {
     
-  test "registro de 2 materias aprobadas distintas, intenta ingresar una amteria desaprobada,
-        intento ingresar 2 veces la misma materia y da el promedio de las materias aprobadas registradas" {
-    roque.registrarMateria(mate1, 8)
-    assert.throwsExceptionWithMessage("La materia NO está aprobada", {roque.registrarMateria(obj1, 2)})
-
-    roque.registrarMateria(obj1, 10)
-    
-    assert.throwsExceptionWithMessage("La materia ya la tiene aprobada", {roque.registrarMateria(obj1, 8)})
-
-    assert.equals(roque.cantMateriasAprobadas(),2) 
-    assert.equals(roque.promedioMateriasAprobadas(), 9)
-  }
-
   test "intento inscribir a Mile en mate1, pero ya está inscripta" {
     mile.inscribirAMateria(mate1)
     assert.throwsExceptionWithMessage("Ya está inscripto en la materia", { mile.inscribirAMateria(mate1) })
@@ -99,15 +195,19 @@ describe "_Roque_" {
 
 
   test "Inscribo a Mile, Gonza y Azu en mate1, pero Azu queda en lista de espera, xq mate1 tiene cupo = 2" {
+    mate1.cupos(2)
     mile.inscribirAMateria(mate1)
     gonza.inscribirAMateria(mate1)
     azu.inscribirAMateria(mate1) //queda en lista de espera
+
+    
     assert.equals(#{mile, gonza}, mate1.alumnosCursando())
     assert.equals(0, mate1.cupos())
     assert.equals([azu], mate1.listaDeEspera())
 
   }
     test "Mile y Gonza son estudiantes de mate1 y Azu está en lista de espera, xq mate1 tiene cupo = 2. Doy de baja a gonza y azu queda inscripta." {
+    mate1.cupos(2)
     mile.inscribirAMateria(mate1)
     gonza.inscribirAMateria(mate1)
     azu.inscribirAMateria(mate1) //queda en lista de espera
